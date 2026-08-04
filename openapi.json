@@ -1,0 +1,777 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI predictor app",
+    "description": "An AI predictor app that predicts the job duration",
+    "version": "7.0.0"
+  },
+  "paths": {
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Read Current User",
+        "description": "Get current user",
+        "operationId": "read_current_user_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Delete Current User",
+        "description": "Delete current user",
+        "operationId": "delete_current_user_auth_me_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reset Current User Password",
+        "description": "Update current user password",
+        "operationId": "reset_current_user_password_auth_reset_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdatePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/auth/access-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login Access Token",
+        "description": "OAuth2 compatible token, get an access token for future requests using username and password",
+        "operationId": "login_access_token_auth_access_token_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_login_access_token_auth_access_token_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Incorrect email or password"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh Token",
+        "description": "OAuth2 compatible token, get an access token for future requests using refresh token",
+        "operationId": "refresh_token_auth_refresh_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Refresh token expired or is already used",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "refresh token expired": {
+                    "summary": "Refresh token expired",
+                    "value": {
+                      "detail": "Refresh token expired"
+                    }
+                  },
+                  "refresh token already used": {
+                    "summary": "Refresh token already used",
+                    "value": {
+                      "detail": "Refresh token already used"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Refresh token does not exist",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Refresh token not found"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register New User",
+        "description": "Create new user",
+        "operationId": "register_new_user_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/probe/live": {
+      "get": {
+        "tags": [
+          "probe"
+        ],
+        "summary": "Live Probe",
+        "operationId": "live_probe_probe_live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "title": "Response Live Probe Probe Live Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/probe/health": {
+      "get": {
+        "tags": [
+          "probe"
+        ],
+        "summary": "Health Probe",
+        "operationId": "health_probe_probe_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "title": "Response Health Probe Probe Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/": {
+      "post": {
+        "tags": [
+          "predict"
+        ],
+        "summary": "Predict",
+        "operationId": "predict_predict__post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccessTokenResponse": {
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 3,
+            "title": "Token Type",
+            "default": "Bearer"
+          },
+          "access_token": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 10,
+            "title": "Access Token"
+          },
+          "expires_at": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Expires At",
+            "description": "Unix timestamp"
+          },
+          "refresh_token": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 10,
+            "title": "Refresh Token"
+          },
+          "refresh_token_expires_at": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Refresh Token Expires At",
+            "description": "Unix timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "expires_at",
+          "refresh_token",
+          "refresh_token_expires_at"
+        ],
+        "title": "AccessTokenResponse"
+      },
+      "Body_login_access_token_auth_access_token_post": {
+        "properties": {
+          "grant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^password$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Type"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "title": "Password"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": ""
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "format": "password",
+            "title": "Client Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_login_access_token_auth_access_token_post"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "RefreshTokenRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 10,
+            "title": "Refresh Token",
+            "description": "JWT refresh token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshTokenRequest"
+      },
+      "UserCreateRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 3,
+            "title": "Username",
+            "description": "User username"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email",
+            "title": "Email",
+            "description": "User email address"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password",
+            "description": "User password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "email",
+          "password"
+        ],
+        "title": "UserCreateRequest"
+      },
+      "UserResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "User Id"
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 3,
+            "title": "Username"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "username",
+          "email"
+        ],
+        "title": "UserResponse"
+      },
+      "UserUpdatePasswordRequest": {
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password",
+            "description": "User password (8-128 characters)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "title": "UserUpdatePasswordRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "auth/access-token"
+          }
+        }
+      }
+    }
+  }
+}

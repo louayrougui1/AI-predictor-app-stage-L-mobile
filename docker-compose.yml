@@ -1,0 +1,37 @@
+services:
+  # Postgres Database
+  postgres_db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE__DB}
+      POSTGRES_USER: ${DATABASE__USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE__PASSWORD}
+    ports:
+      - "${DATABASE__PORT}:5432"
+    volumes:
+      - postgres_db:/var/lib/postgresql
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U ${DATABASE__USERNAME} -d ${DATABASE__DB}"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+  # Redis for rate limiting
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  # Adminer for database user interface
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres_db
+
+volumes:
+  postgres_db:
