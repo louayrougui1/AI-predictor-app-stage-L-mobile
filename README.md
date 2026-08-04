@@ -51,7 +51,7 @@ python generate_openapi.py
 If you make changes to the database models, you can generate and apply a migration with Alembic:
 
 ```bash
-alembic revision --autogenerate -m "create users table"
+alembic revision --autogenerate -m "your message here"
 alembic upgrade head
 ```
 
