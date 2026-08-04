@@ -1,13 +1,12 @@
 # AI Predictor App
 
-An AI-powered prediction app with a FastAPI backend and a modern frontend. The backend is secured with authentication and rate limiting, and includes structured logging for observability.
+An AI-powered prediction app with a FastAPI backend and a React frontend. The backend is secured with authentication and rate limiting, and includes structured logging for observability.
 
 ## Quickstart
 
 ### Frontend
 
 ```bash
-git clone <your-repo-url>
 cd ai-predictor-app/frontend
 npm install
 npm run dev
@@ -49,8 +48,12 @@ python generate_openapi.py
 
 ## Features
 
-- 🔐 Authentication
-- 🚦 Rate limiting (via Redis)
-- 📝 Request/response logging
-- 🐘 PostgreSQL database
+- 🔐 **Authentication** — JWT access tokens and refresh tokens
+- 🛡️ **Authorization** — route-level access control
+- 🔑 **Hashed passwords** — passwords are never stored in plain text
+- ✅ **Input validation** — schema-based request validation, with Alembic managing database migrations
+- 🧱 **SQL injection prevention** — all queries go through SQLAlchemy's ORM/query builder
+- 🚦 **Rate limiting** (via Redis)
+- 📝 **Request/response logging**
+- 🐘 **PostgreSQL** database
 - 🛠️ Optional Adminer UI for inspecting the database
