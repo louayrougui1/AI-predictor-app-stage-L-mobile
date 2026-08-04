@@ -46,6 +46,15 @@ To regenerate `openapi.json`:
 python generate_openapi.py
 ```
 
+### Database migrations
+
+If you make changes to the database models, you can generate and apply a migration with Alembic:
+
+```bash
+alembic revision --autogenerate -m "create users table"
+alembic upgrade head
+```
+
 ## Features
 
 - 🔐 **Authentication** — JWT access tokens and refresh tokens
