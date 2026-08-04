@@ -14,6 +14,24 @@
         "summary": "Read Current User",
         "description": "Get current user",
         "operationId": "read_current_user_auth_me_get",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Access Token"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -51,13 +69,18 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       },
       "delete": {
         "tags": [
@@ -66,6 +89,24 @@
         "summary": "Delete Current User",
         "description": "Delete current user",
         "operationId": "delete_current_user_auth_me_delete",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Access Token"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -96,13 +137,18 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       }
     },
     "/auth/reset-password": {
@@ -113,15 +159,33 @@
         "summary": "Reset Current User Password",
         "description": "Update current user password",
         "operationId": "reset_current_user_password_auth_reset_password_post",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Access Token"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/UserUpdatePasswordRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "204": {
@@ -164,12 +228,7 @@
               }
             }
           }
-        },
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ]
+        }
       }
     },
     "/auth/access-token": {
@@ -178,7 +237,7 @@
           "auth"
         ],
         "summary": "Login Access Token",
-        "description": "OAuth2 compatible token, get an access token for future requests using username and password",
+        "description": "OAuth2 compatible token, sets access/refresh tokens as httpOnly cookies",
         "operationId": "login_access_token_auth_access_token_post",
         "requestBody": {
           "content": {
@@ -257,18 +316,26 @@
           "auth"
         ],
         "summary": "Refresh Token",
-        "description": "OAuth2 compatible token, get an access token for future requests using refresh token",
+        "description": "Rotate access/refresh tokens using the refresh_token cookie",
         "operationId": "refresh_token_auth_refresh_token_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefreshTokenRequest"
-              }
+        "parameters": [
+          {
+            "name": "refresh_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Refresh Token"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -344,6 +411,52 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "No `Authorization` access token header, token is invalid or user removed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "not authenticated": {
+                    "summary": "No authorization token header",
+                    "value": {
+                      "detail": "Not authenticated"
+                    }
+                  },
+                  "invalid token": {
+                    "summary": "Token validation failed, decode failed, it may be expired or malformed",
+                    "value": {
+                      "detail": "Token invalid: {detailed error msg}"
+                    }
+                  },
+                  "removed user": {
+                    "summary": "User removed",
+                    "value": {
+                      "detail": "User removed"
+                    }
+                  }
                 }
               }
             }
@@ -470,13 +583,44 @@
           "predict"
         ],
         "summary": "Predict",
+        "description": "Predict",
         "operationId": "predict_predict__post",
+        "parameters": [
+          {
+            "name": "access_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Access Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ModelResponse"
+                }
               }
             }
           },
@@ -503,6 +647,16 @@
                       "detail": "User removed"
                     }
                   }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -628,21 +782,198 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "RefreshTokenRequest": {
+      "ModelRequest": {
         "properties": {
-          "refresh_token": {
+          "machine_type": {
             "type": "string",
-            "maxLength": 512,
-            "minLength": 10,
-            "title": "Refresh Token",
-            "description": "JWT refresh token"
+            "maxLength": 50,
+            "title": "Machine Type"
+          },
+          "technician": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Technician"
+          },
+          "machine_age_years": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Machine Age Years"
+          },
+          "no_machine": {
+            "type": "boolean",
+            "title": "No Machine",
+            "default": false
+          },
+          "under_warranty": {
+            "type": "boolean",
+            "title": "Under Warranty",
+            "default": false
+          },
+          "sched_year": {
+            "type": "integer",
+            "maximum": 2100.0,
+            "minimum": 2000.0,
+            "title": "Sched Year"
+          },
+          "sched_month": {
+            "type": "integer",
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Sched Month"
+          },
+          "sched_day": {
+            "type": "integer",
+            "maximum": 31.0,
+            "minimum": 1.0,
+            "title": "Sched Day"
+          },
+          "sched_weekday": {
+            "type": "integer",
+            "maximum": 6.0,
+            "minimum": 0.0,
+            "title": "Sched Weekday"
+          },
+          "sched_week": {
+            "type": "integer",
+            "maximum": 53.0,
+            "minimum": 1.0,
+            "title": "Sched Week"
+          },
+          "sched_hour": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 23.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sched Hour"
+          },
+          "sched_hour_missing": {
+            "type": "boolean",
+            "title": "Sched Hour Missing",
+            "default": false
+          },
+          "days_since_start": {
+            "type": "integer",
+            "maximum": 100000.0,
+            "minimum": 0.0,
+            "title": "Days Since Start"
+          },
+          "lead_time_days": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 3650.0,
+                "minimum": -3650.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Time Days"
+          },
+          "lead_time_missing": {
+            "type": "boolean",
+            "title": "Lead Time Missing",
+            "default": false
+          },
+          "deadline_slack_days": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 3650.0,
+                "minimum": -3650.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline Slack Days"
+          },
+          "slack_missing": {
+            "type": "boolean",
+            "title": "Slack Missing",
+            "default": false
+          },
+          "tech_travel_time_min": {
+            "type": "number",
+            "maximum": 1440.0,
+            "minimum": 0.0,
+            "title": "Tech Travel Time Min"
+          },
+          "tech_tenure_years": {
+            "type": "number",
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Tech Tenure Years"
+          },
+          "is_fixed_appointment": {
+            "type": "boolean",
+            "title": "Is Fixed Appointment",
+            "default": false
+          },
+          "visit_number": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 1.0,
+            "title": "Visit Number"
+          },
+          "is_followup": {
+            "type": "boolean",
+            "title": "Is Followup",
+            "default": false
+          },
+          "tech_day_visits": {
+            "type": "integer",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Tech Day Visits"
+          },
+          "tech_day_planned_sum": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Tech Day Planned Sum"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "machine_type",
+          "technician",
+          "machine_age_years",
+          "sched_year",
+          "sched_month",
+          "sched_day",
+          "sched_weekday",
+          "sched_week",
+          "days_since_start",
+          "tech_travel_time_min",
+          "tech_tenure_years",
+          "visit_number",
+          "tech_day_visits",
+          "tech_day_planned_sum"
+        ],
+        "title": "ModelRequest"
+      },
+      "ModelResponse": {
+        "properties": {
+          "prediction": {
+            "type": "integer",
+            "title": "Prediction"
           }
         },
         "type": "object",
         "required": [
-          "refresh_token"
+          "prediction"
         ],
-        "title": "RefreshTokenRequest"
+        "title": "ModelResponse"
       },
       "UserCreateRequest": {
         "properties": {
@@ -760,17 +1091,6 @@
           "type"
         ],
         "title": "ValidationError"
-      }
-    },
-    "securitySchemes": {
-      "OAuth2PasswordBearer": {
-        "type": "oauth2",
-        "flows": {
-          "password": {
-            "scopes": {},
-            "tokenUrl": "auth/access-token"
-          }
-        }
       }
     }
   }
